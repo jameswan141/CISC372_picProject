@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include <omp.h>
+#include <math.h>
 #include "image.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,8 +12,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-//An array of kernel matrices to be used for image convolution.  
-//The indexes of these match the enumeration from the header file. ie. algorithms[BLUR] returns the kernel corresponding to a box blur.
 Matrix algorithms[]={
     {{0,-1,0},{-1,4,-1},{0,-1,0}},
     {{0,-1,0},{-1,5,-1},{0,-1,0}},
@@ -23,13 +22,6 @@ Matrix algorithms[]={
 };
 
 
-//getPixelValue - Computes the value of a specific pixel on a specific channel using the selected convolution kernel
-//Paramters: srcImage:  An Image struct populated with the image being convoluted
-//           x: The x coordinate of the pixel
-//          y: The y coordinate of the pixel
-//          bit: The color channel being manipulated
-//          algorithm: The 3x3 kernel matrix to use for the convolution
-//Returns: The new value for this x,y pixel and bit channel
 uint8_t getPixelValue(Image* srcImage,int x,int y,int bit,Matrix algorithm){
     int px,mx,py,my,i,span;
     span=srcImage->width*srcImage->bpp;
@@ -52,11 +44,6 @@ uint8_t getPixelValue(Image* srcImage,int x,int y,int bit,Matrix algorithm){
     return result;
 }
 
-//convolute:  Applies a kernel matrix to an image
-//Parameters: srcImage: The image being convoluted
-//            destImage: A pointer to a  pre-allocated (including space for the pixel array) structure to receive the convoluted image.  It should be the same size as srcImage
-//            algorithm: The kernel matrix to use for the convolution
-//Returns: Nothing
 void convolute(Image* srcImage,Image* destImage,Matrix algorithm){
     int row,pix,bit,span;
     span=srcImage->bpp*srcImage->bpp;
@@ -69,16 +56,11 @@ void convolute(Image* srcImage,Image* destImage,Matrix algorithm){
     }
 }
 
-//Usage: Prints usage information for the program
-//Returns: -1
 int Usage(){
     printf("Usage: image <filename> <type>\n\twhere type is one of (edge,sharpen,blur,gauss,emboss,identity)\n");
     return -1;
 }
 
-//GetKernelType: Converts the string name of a convolution into a value from the KernelTypes enumeration
-//Parameters: type: A string representation of the type
-//Returns: an appropriate entry from the KernelTypes enumeration, defaults to IDENTITY, which does nothing but copy the image.
 enum KernelTypes GetKernelType(char* type){
     if (!strcmp(type,"edge")) return EDGE;
     else if (!strcmp(type,"sharpen")) return SHARPEN;
@@ -88,12 +70,12 @@ enum KernelTypes GetKernelType(char* type){
     else return IDENTITY;
 }
 
-//main:
-//argv is expected to take 2 arguments.  First is the source file name (can be jpg, png, bmp, tga).  Second is the lower case name of the algorithm.
 int main(int argc,char** argv){
     long t1,t2;
     t1=time(NULL);
 
+#   pragma omp parallel num_threads(thread_count)
+#   pragma omp single
     stbi_set_flip_vertically_on_load(0); 
     if (argc!=3) return Usage();
     char* fileName=argv[1];
@@ -118,6 +100,7 @@ int main(int argc,char** argv){
     
     free(destImage.data);
     t2=time(NULL);
+#   pragma omp critical
     printf("Took %ld seconds\n",t2-t1);
    return 0;
 }
