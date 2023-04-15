@@ -25,7 +25,6 @@ Matrix algorithms[]={
 uint8_t getPixelValue(Image* srcImage,int x,int y,int bit,Matrix algorithm){
     int px,mx,py,my,i,span;
     span=srcImage->width*srcImage->bpp;
-    // for the edge pixes, just reuse the edge pixel
     px=x+1; py=y+1; mx=x-1; my=y-1;
     if (mx<0) mx=0;
     if (my<0) my=0;
@@ -73,7 +72,9 @@ enum KernelTypes GetKernelType(char* type){
 int main(int argc,char** argv){
     long t1,t2;
     t1=time(NULL);
+    int thread_count;
 
+    thread_count=strtol(argv[1],NULL,4);
 #   pragma omp parallel num_threads(thread_count)
 #   pragma omp single
     stbi_set_flip_vertically_on_load(0); 
