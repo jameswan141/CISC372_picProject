@@ -25,7 +25,6 @@ Matrix algorithms[]={
 uint8_t getPixelValue(Image* srcImage,int x,int y,int bit,Matrix algorithm){
     int px,mx,py,my,i,span;
     span=srcImage->width*srcImage->bpp;
-    // for the edge pixes, just reuse the edge pixel
     px=x+1; py=y+1; mx=x-1; my=y-1;
     if (mx<0) mx=0;
     if (my<0) my=0;
