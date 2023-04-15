@@ -1,12 +1,0 @@
-Script started on Thu 13 Apr 2023 07:09:30 PM EDT
-]0;jameswan@login01.darwin:~/CISC372_picProject[?1034h[jameswan@login01.darwin CISC372_picProject]$ workgroup -g ea-cisc372
-]0;jameswan@login01.darwin:~/CISC372_picProject[?1034h[(ea-cisc372:jameswan)@login01.darwin CISC372_picProject]$ sbatch batch_pthread. sh
-Submitted batch job 3983207
-]0;jameswan@login01.darwin:~/CISC372_picProject[(ea-cisc372:jameswan)@login01.darwin CISC372_picProject]$ sbatch batch_omp.sh
-Submitted batch job 3983208
-]0;jameswan@login01.darwin:~/CISC372_picProject[(ea-cisc372:jameswan)@login01.darwin CISC372_picProject]$ exit
-logout
-]0;jameswan@login01.darwin:~/CISC372_picProject[jameswan@login01.darwin CISC372_picProject]$ exit
-exit
-
-Script done on Thu 13 Apr 2023 07:10:01 PM EDT
